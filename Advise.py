@@ -1,5 +1,6 @@
 from Scrapper import Scrapper
 from Cluster import Cluster
+from Visualizer import Visualizer
 import sys,pickle
 
 def store_data(data, filename):
@@ -38,3 +39,5 @@ if __name__ == "__main__":
   scrapper.load("query_data")
   university_pages = load_data("university_pages")
   clusters = Cluster.kmeans(data=university_pages)
+  visualizer = Visualizer(data=university_pages, clusters=clusters)
+
