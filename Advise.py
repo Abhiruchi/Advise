@@ -38,4 +38,3 @@ if __name__ == "__main__":
   scrapper.load("query_data")
   university_pages = load_data("university_pages")
   clusters = Cluster.kmeans(data=university_pages)
-  print clusters
