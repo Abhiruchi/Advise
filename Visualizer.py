@@ -1,4 +1,5 @@
-import sys, random
+import sys, random, os
+import shlex, subprocess
 
 class Visualizer(object):
 
@@ -13,6 +14,10 @@ class Visualizer(object):
     self._build()
 
   def _build(self):
+    """
+    Creates a html page by building a scatter plot of the different facebook pages.
+    Each cluster have a different color.
+    """
     colors = random.sample(xrange(0,255), len(self._clusters)*3)
     # start of the html code
     htmlsource = "<!DOCTYPE HTML>\n"
@@ -127,3 +132,10 @@ class Visualizer(object):
     file.write(htmlsource)
     file.close()
 
+  def visualize(self):
+    """
+    Opens the html page on a browser
+    """
+    command_line = "open " + self._pagetitle +".htm"
+    args = shlex.split(command_line)
+    subprocess.Popen(args)
