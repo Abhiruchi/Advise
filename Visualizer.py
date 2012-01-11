@@ -1,8 +1,8 @@
-import sys
+import sys, random
 
 class Visualizer(object):
 
-  def __init__(self, data=None, clusters=None, pagetitle="demo"):
+  def __init__(self, data=None, clusters=None, pagetitle="kmeans-demo"):
     """
     Creates an empty Visualizer object that creates a scatter plot of facebook pages
     @param clusters: Matrix of similar facebook pages 
@@ -13,6 +13,8 @@ class Visualizer(object):
     self._build()
 
   def _build(self):
+    colors = random.sample(xrange(0,255), len(self._clusters)*3)
+    # start of the html code
     htmlsource = "<!DOCTYPE HTML>\n"
     htmlsource += "<html>\n"
     htmlsource +=  "\t<head>\n"
@@ -23,82 +25,107 @@ class Visualizer(object):
     htmlsource += "\t\t<script type=\"text/javascript\" src=\"./js/modules/exporting.js\"></script>\n"
     htmlsource += "\t\t<script type=\"text/javascript\">\n"
     htmlsource += " \
-                  var chart;\n \
-                  $(document).ready(function() {\n \
-                    chart = new Highcharts.Chart({\n \
-                      chart: {\n \
-                          renderTo: 'container',\n \
-                          defaultSeriesType: 'scatter',\n \
-                          zoomType: 'xy'\n \
-                      },\n \
-                      title: {\n \
-                          text: 'Height Versus Weight of 507 Individuals by Gender'\n  \
-                      },\n \
-                      subtitle: {\n \
-                          text: 'Source: Facebook'\n \
-                      },\n \
-                      xAxis: {\n \
-                          title: {\n \
-                              enabled: true,\n \
-                              text: 'Likes'\n \
-                          }\n \
-                          startOnTick: true,\n \
-                          endOnTick: true,\n \
-                          showLastLabel: true\n \
-                      },\n \
-                      yAxis: {\n \
-                          title: {\n \
-                              text: 'Talking About Count'\n \
-                          }\n \
-                      },\n \
-                      tooltip: {\n \
-                          formatter: function() {\n \
-                              return ''+\n \
-                              this.x +' likes, '+ this.y +' talking about count';\n \
-                          }\n \
-                      },\n \
-                      legend: {\n \
-                          layout: 'vertical',\n \
-                          align: 'left',\n \
-                          verticalAlign: 'top',\n \
-                          x: 100,\n \
-                          y: 70,\n \
-                          floating: true,\n \
-                          backgroundColor: '#FFFFFF',\n \
-                          borderWidth: 1\n \
-                      },\n \
-                      plotOptions: {\n \
-                          scatter: {\n \
-                              marker: {\n \
-                                  radius: 5,\n \
-                                  states: {\n \
-                                      hover: {\n \
-                                          enabled: true,\n \
-                                          lineColor: 'rgb(100,100,100)'\n \
-                                      }\n \
-                                  }\n \
-                              },\n \
-                              states: {\n \
-                                  hover: {\n \
-                                      marker: {\n \
-                                          enabled: false\n \
-                                      }\n \
-                                  }\n \
-                              }\n \
-                          }\n \
-                      },\n \
-                      series: [{\n \
-                        name: 'Female',\n \
-                        color: 'rgba(223, 83, 83, .5)',\n \
-                        data: [[161.2, 51.6], [167.5, 59.0], [159.5, 49.2], [157.0, 63.0], [155.8, 53.6] ]\n \
-                      }]\n \
-                    });\n \
-                  });\n \
-                  "
+    var chart;\n \
+    $(document).ready(function() {\n \
+      chart = new Highcharts.Chart({\n \
+        chart: {\n \
+          renderTo: 'container',\n \
+          defaultSeriesType: 'scatter',\n \
+          zoomType: 'xy'\n \
+        },\n \
+        title: {\n \
+          text: '"+ self._pagetitle +"'\n \
+        },\n \
+        subtitle: {\n \
+          text: 'Source: Facebook'\n \
+        },\n \
+        xAxis: {\n \
+          title: {\n \
+            enabled: true,\n \
+            text: 'Likes'\n \
+          },\n \
+          startOnTick: true,\n \
+          endOnTick: true,\n \
+          showLastLabel: true\n \
+        },\n \
+        yAxis: {\n \
+          title: {\n \
+            text: 'Talking about count'\n \
+          }\n \
+        },\n \
+        tooltip: {\n \
+          formatter: function() {\n \
+            return ''+\n \
+            this.x +' likes, '+ this.y +' talking';\n \
+          }\n \
+        },\n \
+        legend: {\n \
+          layout: 'vertical',\n \
+          align: 'left',\n \
+          verticalAlign: 'top',\n \
+          x: 100,\n \
+          y: 70,\n \
+          floating: true,\n \
+          backgroundColor: '#FFFFFF',\n \
+          borderWidth: 1\n \
+        },\n \
+        plotOptions: {\n \
+          scatter: {\n \
+            marker: {\n \
+              radius: 5,\n \
+              states: {\n \
+                hover: {\n \
+                  enabled: true,\n \
+                  lineColor: 'rgb(100,100,100)'\n \
+                }\n \
+              }\n \
+            },\n \
+            states: {\n \
+              hover: {\n \
+                marker: {\n \
+                  enabled: false\n \
+                }\n \
+              }\n \
+            }\n \
+          }\n \
+        },\n \
+        series: [\n \
+          "
+    for index in range(0, len(self._clusters)):
+      htmlsource += "{\n"
+      red = colors[index*3]
+      green = colors[index*3 + 1]
+      blue = colors[index*3 + 2]
+      alpha = 0.5
+      name = "Cluster"+ str(index)
+      htmlsource += "name: '" + name + "',\n"
+      htmlsource += "color: 'rgba("+str(red)+", "+str(green)+", "+str(blue)+", "+str(alpha)+")',\n"
+      data = ""
+      for id in self._clusters[index]:
+        likes = self._data[id]['likes']
+        talking = self._data[id]['talking_about_count']
+        data += "["+str(likes)+", "+str(talking)+"],"
+      # endfor id
+      htmlsource += "data: ["+data + "]\n"
+      htmlsource += "},\n"
+    # endfor index
+    
+    """
+    htmlsource += "{\n"
+    htmlsource += "name: 'Female',\n"
+    htmlsource += "color: 'rgba(223, 83, 83, .5)',\n"
+    htmlsource += "data: [[161.2, 51.6], [167.5, 59.0], [159.5, 49.2], [157.0, 63.0], [155.8, 53.6]]\n"
+    htmlsource += "}\n"
+    """
+    htmlsource += " \
+        ]\n \
+      });\n \
+    });\n \
+    "
     htmlsource += "</script>\n"
     htmlsource += "\t</head>\n"
     htmlsource += "\t<body>\n"
-    htmlsource += "\t\t<div id=\"container\" style=\"width: 800px; height: 400px; margin: 0 auto\"></div>\n"
+    htmlsource += "\t\t<div id=\"container\" style=\"width: 960px; height: 500px; margin: 0 auto\"></div>\n"
     htmlsource += "\t</body>\n"
     htmlsource += "</html>\n"
 
