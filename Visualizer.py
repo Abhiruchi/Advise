@@ -55,7 +55,7 @@ class Visualizer(object):
         },\n \
         tooltip: {\n \
           formatter: function() {\n \
-            return ''+\n \
+            return '<a href=\"'+this.point.name+'\">'+this.point.name+'</a><br>'+\n \
             this.x +' likes, '+ this.y +' talking';\n \
           }\n \
         },\n \
@@ -104,19 +104,12 @@ class Visualizer(object):
       for id in self._clusters[index]:
         likes = self._data[id]['likes']
         talking = self._data[id]['talking_about_count']
-        data += "["+str(likes)+", "+str(talking)+"],"
+        link = self._data[id]['link']
+        data += "{name: '"+ link +"',\nx: "+str(likes)+",\n y: "+str(talking)+"},\n"
       # endfor id
       htmlsource += "data: ["+data + "]\n"
       htmlsource += "},\n"
     # endfor index
-    
-    """
-    htmlsource += "{\n"
-    htmlsource += "name: 'Female',\n"
-    htmlsource += "color: 'rgba(223, 83, 83, .5)',\n"
-    htmlsource += "data: [[161.2, 51.6], [167.5, 59.0], [159.5, 49.2], [157.0, 63.0], [155.8, 53.6]]\n"
-    htmlsource += "}\n"
-    """
     htmlsource += " \
         ]\n \
       });\n \
